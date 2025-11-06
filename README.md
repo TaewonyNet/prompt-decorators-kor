@@ -1,203 +1,210 @@
-# Prompt Decorators Framework
+# 프롬프트 데코레이터 프레임워크
 
-Prompt Decorators extend the functionality of large language models by allowing structured, modular control over reasoning, style, and behavior.
-Each decorator enforces specific response rules, enabling users to declaratively modify how the model thinks and writes — without retraining.
-
----
-
-## Conceptual Overview
-
-Prompt Decorators are lightweight control markers (for example, `+++Reasoning`) that alter the response generation process.
-They can be combined, scoped, and remembered during conversation, forming a flexible behavioral layer over standard prompting.
+프롬프트 데코레이터는 추론, 스타일 및 동작에 대한 구조화되고 모듈식 제어를 허용하여 대형 언어 모델의 기능을 확장합니다.
+각 데코레이터는 특정 응답 규칙을 적용하여 사용자가 모델의 사고와 작성 방식을 선언적으로 수정할 수 있도록 합니다 — 재훈련 없이.
 
 ---
 
-## Categories of Prompt Decorators
+## 포크 정보
 
-The Prompt Decorators framework is organized into two main families, as illustrated in the taxonomy diagram below:
+**원본 저장소:** [prompt-decorators](https://github.com/Yoctahedron-Technologies/prompt-decorators)
+**포크 이유:** 한글 사용자를 위해 프레임워크를 한국어로 번역하여 제공하기 위함
+
+---
+
+## 개념적 개요
+
+프롬프트 데코레이터는 응답 생성 프로세스를 변경하는 경량 제어 마커입니다 (예: `+++추론`).
+이들은 대화 중에 결합, 범위 지정 및 기억될 수 있으며, 표준 프롬프팅 위에 유연한 동작 계층을 형성합니다.
+
+---
+
+## 프롬프트 데코레이터 분류
+
+프롬프트 데코레이터 프레임워크는 아래 분류도에서 설명하는 것처럼 두 가지 주요 패밀리로 구성됩니다:
 
 ![Prompt Decorator Categories](./images/prompt-decorator-categories.png)
 
-### **A. Cognitive & Generative Decorators**
-These decorators guide *how the model thinks, explores, and develops ideas.*
+### **A. 인지 및 생성 데코레이터**
+이 데코레이터들은 *모델이 사고하고, 탐색하고, 아이디어를 개발하는 방법*을 안내합니다.
 
-| **Subcategory** | **Purpose** | **Key Decorators** |
+| **하위 범주** | **목적** | **주요 데코레이터** |
 |-----------------|--------------|--------------------|
-| **Reasoning & Generation** | Enforce analytical, logical, or multi-perspective reasoning. | `+++Reasoning`, `+++Debate`, `+++Socratic` |
-| **Exploration, Interaction & Planning** | Encourage open-ended exploration, inquiry, and planning. | `+++Interactive`, `+++Brainstorm`, `+++Planning`, `+++Import` |
-| **Inquiry & Clarification** | Ensure information gaps are identified and clarified before proceeding. | `+++Interactive`, `+++Rewrite` |
-| **Idea Development & Structuring** | Refine, structure, and extend ideas into coherent outputs. | `+++Rewrite`, `+++Planning` |
-| **Evaluation, Feedback & Refinement** | Critically assess and improve content through iteration. | `+++Critique`, `+++Refine`, `+++Candor` |
+| **추론 및 생성** | 분석적, 논리적 또는 다각적 추론을 적용합니다. | `+++추론`, `+++토론`, `+++소크라테스식` |
+| **탐색, 상호작용 및 계획** | 개방형 탐색, 탐구 및 계획을 장려합니다. | `+++상호작용`, `+++브레인스토밍`, `+++계획`, `+++가져오기` |
+| **탐구 및 명확화** | 진행하기 전에 정보 격차를 식별하고 명확히 합니다. | `+++상호작용`, `+++재작성` |
+| **아이디어 개발 및 구조화** | 아이디어를 정제, 구조화하고 일관된 출력으로 확장합니다. | `+++재작성`, `+++계획` |
+| **평가, 피드백 및 정제** | 반복을 통해 콘텐츠를 비판적으로 평가하고 개선합니다. | `+++비평`, `+++정제`, `+++솔직함` |
 
 ---
 
-### **B. Expressive & Systemic Decorators**
-These decorators control *how the model expresses results, manages sessions, and ensures consistency.*
+### **B. 표현 및 시스템 데코레이터**
+이 데코레이터들은 *모델이 결과를 표현하고, 세션을 관리하고, 일관성을 보장하는 방법*을 제어합니다.
 
-| **Subcategory** | **Purpose** | **Key Decorators** |
+| **하위 범주** | **목적** | **주요 데코레이터** |
 |-----------------|--------------|--------------------|
-| **Output Formatting & Expression** | Structure or constrain the format and tone of output. | `+++OutputFormat`, `+++Tone` |
-| **Meta-Control & Session Management** | Manage decorator state, memory, and operational flow. | `+++ChatScope`, `+++MessageScope`, `+++Clear`, `+++ActiveDecs`, `+++AvailableDecs`, `+++Validate`, `+++FactCheck`, `+++CiteSources`, `+++Export`, `+++Dump` |
+| **출력 형식 및 표현** | 출력의 형식과 어조를 구조화하거나 제약합니다. | `+++출력형식`, `+++어조` |
+| **메타 제어 및 세션 관리** | 데코레이터 상태, 메모리 및 운영 흐름을 관리합니다. | `+++대화범위`, `+++메시지범위`, `+++초기화`, `+++활성데코레이터`, `+++사용가능데코레이터`, `+++사실확인`, `+++출처인용`, `+++내보내기`, `+++덤프` |
 
 ---
 
-## Combining Decorators
+## 데코레이터 결합
 
-Multiple decorators can be combined to refine responses.
-For example:
+여러 데코레이터를 결합하여 응답을 세밀하게 조정할 수 있습니다.
+예를 들어:
 
 ```prompt
-+++Reasoning
-+++StepByStep
-+++Tone(style=formal)
++++추론
++++단계별
++++어조(스타일=정중)
 
-Explain the economic impact of renewable energy transitions.
+재생 에너지 전환의 경제적 영향을 설명하세요.
 ```
 
-This prompt enforces logical reasoning, structured progression, and formal tone simultaneously.
+이 프롬프트는 논리적 추론, 구조화된 진행 및 정중한 어조를 동시에 적용합니다.
 
 ---
 
-## Key Prompt Decorators and Their Benefits
+## 주요 프롬프트 데코레이터 및 효과
 
-| **Prompt Decorator** | **Parameters** | **Function** |
+| **프롬프트 데코레이터** | **매개변수** | **기능** |
 |----------------------|---------------|--------------|
-| `+++Reasoning` | — | Ensures logical explanation before answering |
-| `+++StepByStep` | — | Breaks down complex tasks into sequential reasoning |
-| `+++Socratic` | — | Encourages critical thinking through guided questions |
-| `+++Debate` | — | Generates multiple perspectives before concluding |
-| `+++Critique` | — | Analyzes strengths and weaknesses before improving |
-| `+++Refine(iterations=N)` | `iterations` – number of refinement cycles | Iterates through multiple improvements |
-| `+++Interactive(limit=N, style=TYPE)` | `limit`, `style` | Asks clarifying questions when context is incomplete |
-| `+++Planning` | — | Outlines objectives and approach before execution |
-| `+++Brainstorm(limit=N, diversity=LEVEL)` | `limit`, `diversity` | Produces diverse ideas without early evaluation |
-| `+++Rewrite` | — | Reframes the user’s prompt for clarity and precision |
-| `+++Import(topic=STRING)` | `topic` – conceptual or disciplinary lens | Applies a named lens to reasoning |
-| `+++Candor(level=LEVEL)` | `level` – low, medium, or high | Controls feedback directness while staying professional |
-| `+++OutputFormat(format=FORMAT)` | `format` – output type | Structures the response in a specific format |
-| `+++Tone(style=STYLE)` | `style` – tone or register | Adjusts the communication tone or style |
-| `+++FactCheck` | — | Verifies factual accuracy of key claims |
-| `+++CiteSources` | — | Ensures all major claims are supported by sources |
-| `+++Validate` | — | Performs self-check on grammar, logic, and consistency |
-| `+++ChatScope` | — | Applies decorators persistently across a conversation |
-| `+++MessageScope` | — | Limits decorator effects to a single message |
-| `+++Clear(targets=LIST)` | `targets` – decorators to clear (optional) | Clears all or specified active decorators |
-| `+++ActiveDecs` | — | Lists currently active decorators |
-| `+++AvailableDecs` | — | Lists all available decorators and their status |
-| `+++Export(format=FORMAT)` | `format` – text, markdown, json, yaml | Exports or summarizes conversation in a chosen format |
-| `+++Dump` | Alias of `+++Export` | Quick or raw output version of `+++Export` |
+| `+++언어(입력=LANG, 출력=LANG)` | `입력`, `출력` – ISO 639-1 언어 코드 | 입력 및 출력 언어를 설정합니다 |
+| `+++추론` | — | 답변하기 전에 논리적 설명을 보장합니다 |
+| `+++단계별` | — | 복잡한 작업을 순차적 추론으로 분해합니다 |
+| `+++소크라테스식` | — | 유도 질문을 통해 비판적 사고를 장려합니다 |
+| `+++토론` | — | 결론을 내리기 전에 여러 관점을 생성합니다 |
+| `+++비평` | — | 개선하기 전에 강점과 약점을 분석합니다 |
+| `+++정제(반복=N)` | `반복` – 정제 주기 수 | 여러 개선을 반복합니다 |
+| `+++상호작용(제한=N, 스타일=TYPE)` | `제한`, `스타일` | 맥락이 불완전할 때 명확화 질문을 합니다 |
+| `+++계획` | — | 실행 전에 목표와 접근 방식을 개괄합니다 |
+| `+++브레인스토밍(제한=N, 다양성=LEVEL)` | `제한`, `다양성` | 조기 평가 없이 다양한 아이디어를 생성합니다 |
+| `+++재작성` | — | 명확성과 정확성을 위해 사용자의 프롬프트를 재구성합니다 |
+| `+++가져오기(주제=STRING)` | `주제` – 개념적 또는 학문적 렌즈 | 명명된 렌즈를 추론에 적용합니다 |
+| `+++솔직함(수준=LEVEL)` | `수준` – 낮음, 중간 또는 높음 | 전문성을 유지하면서 피드백 직접성을 제어합니다 |
+| `+++출력형식(형식=FORMAT)` | `형식` – 출력 유형 | 특정 형식으로 응답을 구조화합니다 |
+| `+++어조(스타일=STYLE)` | `스타일` – 어조 또는 어법 | 커뮤니케이션 어조 또는 스타일을 조정합니다 |
+| `+++사실확인` | — | 주요 주장의 사실적 정확성을 검증합니다 |
+| `+++출처인용` | — | 모든 주요 주장이 출처로 뒷받침되도록 보장합니다 |
+| `+++대화범위` | — | 대화 전반에 걸쳐 데코레이터를 지속적으로 적용합니다 |
+| `+++메시지범위` | — | 데코레이터 효과를 단일 메시지로 제한합니다 |
+| `+++초기화(대상=LIST)` | `대상` – 지울 데코레이터 (선택 사항) | 모든 또는 지정된 활성 데코레이터를 지웁니다 |
+| `+++활성데코레이터` | — | 현재 활성 데코레이터를 나열합니다 |
+| `+++사용가능데코레이터` | — | 모든 사용 가능한 데코레이터와 상태를 나열합니다 |
+| `+++내보내기(형식=FORMAT)` | `형식` – text, markdown, json, yaml | 선택한 형식으로 대화를 내보내거나 요약합니다 |
+| `+++덤프` | `+++내보내기`의 별칭 | `+++내보내기`의 빠르거나 원시 출력 버전 |
 
 
 ---
 
-## How Scope and Memory Work
+## 범위와 메모리 작동 방식
 
-Decorator scope controls *how long* and *where* a decorator applies:
+데코레이터 범위는 데코레이터가 *얼마나 오래* 그리고 *어디에* 적용되는지를 제어합니다:
 
-- **Message Scope** (`+++MessageScope`) → Affects only the current prompt.
-- **Chat Scope** (`+++ChatScope`) → Persists across conversation turns.
-- **Clear** (`+++Clear`) → Resets decorators selectively or entirely.
+- **메시지 범위** (`+++메시지범위`) → 현재 프롬프트에만 영향을 줍니다.
+- **대화 범위** (`+++대화범위`) → 대화 턴 전반에 걸쳐 지속됩니다.
+- **초기화** (`+++초기화`) → 데코레이터를 선택적으로 또는 전체적으로 재설정합니다.
 
-The system retains awareness of active decorators to ensure consistent behavior between exchanges.
+시스템은 교환 간 일관된 동작을 보장하기 위해 활성 데코레이터에 대한 인식을 유지합니다.
 
 ---
 
-## Prompt Decorators Definitions
+## 프롬프트 데코레이터 정의
 
-Detailed definitions for each decorator are provided in **[`prompt-decorators.txt`](./prompt-decorators.txt)**.
+각 데코레이터에 대한 상세한 정의는 **[`prompt-decorators-kor.txt`](./prompt-decorators-kor.txt)**에 제공됩니다.
 
-Each definition specifies:
-- Behavioral rules
-- Response structure
-- Parameters (if applicable)
-- Compliance and scope requirements
+각 정의는 다음을 지정합니다:
+- 동작 규칙
+- 응답 구조
+- 매개변수 (해당되는 경우)
+- 준수 및 범위 요구사항
 
-### How to Use the Definition File
+### 정의 파일 사용 방법
 
-Prompt Decorators rely on the model’s memory of definitions.
-To enable them in chat-based LLMs (such as ChatGPT, Gemini, Claude, or Grok):
+프롬프트 데코레이터는 모델의 정의 메모리에 의존합니다.
+채팅 기반 LLM(ChatGPT, Gemini, Claude 또는 Grok 등)에서 활성화하려면:
 
-1. **Provide the definitions file once** — paste the contents of `prompt-decorators.txt` into the chat or add it to your custom/system instructions.
-2. The model will then “remember” the rules and behaviors of each decorator for that session.
-3. You can activate decorators inline by prefixing them in your prompt, for example:
+1. **정의 파일을 한 번 제공** — `prompt-decorators-kor.txt`의 내용을 채팅에 붙여넣거나 사용자 정의/시스템 지침에 추가합니다.
+2. 그러면 모델이 해당 세션에 대한 각 데코레이터의 규칙과 동작을 "기억"합니다.
+3. 프롬프트에 접두사로 붙여 데코레이터를 인라인으로 활성화할 수 있습니다. 예를 들어:
 
 ```prompt
-+++Reasoning
-+++Tone(style=formal)
++++추론
++++어조(스타일=정중)
 
-Explain why renewable energy transition affects global markets.
+재생 에너지 전환이 글로벌 시장에 영향을 미치는 이유를 설명하세요.
 ```
 
-4. Multiple decorators can be combined to modify reasoning, tone, structure, and verification layers.
-5. To reset behaviors, use `+++Clear` or restart the session.
+4. 여러 데코레이터를 결합하여 추론, 어조, 구조 및 검증 계층을 수정할 수 있습니다.
+5. 동작을 재설정하려면 `+++초기화`를 사용하거나 세션을 다시 시작하세요.
 
-This approach makes decorators portable and platform-agnostic — no code modification required.
+이 접근 방식은 데코레이터를 이식 가능하고 플랫폼 독립적으로 만듭니다 — 코드 수정이 필요하지 않습니다.
 
 ---
 
-## Examples of Decorator Usage
+## 데코레이터 사용 예시
 
-Below are simple examples illustrating how one, two, or three decorators change the model’s behavior.
-These examples use natural language inputs that can be pasted directly into an LLM chat.
+아래는 하나, 둘 또는 세 개의 데코레이터가 모델의 동작을 어떻게 변경하는지 보여주는 간단한 예시입니다.
+이러한 예시는 LLM 채팅에 직접 붙여넣을 수 있는 자연어 입력을 사용합니다.
 
-### **Example 1 – Single Decorator**
+### **예시 1 – 단일 데코레이터**
 
 ```prompt
-+++Reasoning
++++추론
 
-Why did the Roman Empire fall?
+로마 제국은 왜 멸망했나요?
 ```
 
-**Expected behavior:** The model explains its reasoning process before answering, giving a logical chain of causes.
+**예상 동작:** 모델이 답변하기 전에 추론 과정을 설명하며, 논리적 인과 관계를 제시합니다.
 
 ---
 
-### **Example 2 – Two Decorators**
+### **예시 2 – 두 개의 데코레이터**
 
 ```prompt
-+++StepByStep
-+++Tone(style=formal)
++++단계별
++++어조(스타일=정중)
 
-Describe how neural networks learn from data.
+신경망이 데이터로부터 학습하는 방법을 설명하세요.
 ```
 
-**Expected behavior:** The model breaks down the explanation into sequential steps, maintaining a formal tone.
+**예상 동작:** 모델이 설명을 순차적 단계로 분해하고 정중한 어조를 유지합니다.
 
 ---
 
-### **Example 3 – Three Decorators**
+### **예시 3 – 세 개의 데코레이터**
 
 ```prompt
-+++Brainstorm(limit=5, diversity=high)
-+++Critique
-+++Refine(iterations=3)
-Propose innovative applications for large language models in healthcare.
++++브레인스토밍(제한=5, 다양성=높음)
++++비평
++++정제(반복=3)
+의료 분야에서 대형 언어 모델의 혁신적인 응용 방안을 제안하세요.
 ```
 
-**Expected behavior:**
-1. The model first generates five diverse ideas.
-2. Then it critiques their strengths and weaknesses.
-3. Finally, it refines and improves the top ideas over two iterations.
+**예상 동작:**
+1. 모델이 먼저 다섯 가지 다양한 아이디어를 생성합니다.
+2. 그런 다음 그들의 강점과 약점을 비평합니다.
+3. 마지막으로 상위 아이디어를 세 번의 반복을 통해 정제하고 개선합니다.
 
-These compositional examples show how decorators can stack logically to form complex cognitive workflows without retraining the model.
+이러한 조합 예시는 데코레이터가 모델을 재훈련하지 않고도 논리적으로 쌓여 복잡한 인지 워크플로우를 형성할 수 있음을 보여줍니다.
 
 ---
 
-## Citation
+## 인용
 
-The Prompt Decorators framework is described in detail in the paper:
+프롬프트 데코레이터 프레임워크는 다음 논문에 자세히 설명되어 있습니다:
 
-**"Prompt Decorators: A Declarative and Composable Syntax for Reasoning, Formatting, and Control in LLMs"**  
-*Mostapha Kalami Heris*  
+**"Prompt Decorators: A Declarative and Composable Syntax for Reasoning, Formatting, and Control in LLMs"**
+*Mostapha Kalami Heris*
 arXiv preprint arXiv:2510.19850 (2025)
 
-📄 **Read the full paper:** [https://arxiv.org/abs/2510.19850](https://arxiv.org/abs/2510.19850)
+📄 **전체 논문 읽기:** [https://arxiv.org/abs/2510.19850](https://arxiv.org/abs/2510.19850)
 
-### BibTeX Citation
+### BibTeX 인용
 
 ```bibtex
 @misc{heris2025promptdecorators,
-      title={Prompt Decorators: A Declarative and Composable Syntax for Reasoning, Formatting, and Control in LLMs}, 
+      title={Prompt Decorators: A Declarative and Composable Syntax for Reasoning, Formatting, and Control in LLMs},
       author={Mostapha Kalami Heris},
       year={2025},
       eprint={2510.19850},
@@ -209,7 +216,7 @@ arXiv preprint arXiv:2510.19850 (2025)
 
 ---
 
-## License
+## 라이선스
 
-This framework is open-source under the MIT License.
-You are free to adapt, extend, or integrate it in your own prompt engineering workflows with attribution.
+이 프레임워크는 MIT 라이선스 하에 오픈 소스입니다.
+출처를 표시하면 자신의 프롬프트 엔지니어링 워크플로우에서 자유롭게 적용, 확장 또는 통합할 수 있습니다.
