@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "Prompt Decorators Helper",
+  "version": "1.0",
+  "description": "Prompt Decorators Helper",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {},
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["prompt-decorators-kor.txt", "icon.png"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
