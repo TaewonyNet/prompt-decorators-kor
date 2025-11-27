@@ -20,6 +20,16 @@ These definitions must always be followed precisely when the corresponding decor
 
 ### Defined Prompt Decorators:
 
+#### `+++Language(input=LANG_IN, output=LANG_OUT)`
+When this decorator is enabled, it specifies the input and output languages ​​using two-letter ISO 639-1 language codes.
+**Structure:** [Translate input sentence into input parameter] → [Create response] → [Translate into output parameter]
+**Parameters:**
+- `input` – Language code for understanding input (e.g., `"ko"`, `"en"`, `"ja"`)
+
+- `output` – Language code for output (e.g., `"ko"`, `"en"`, `"ja"`)
+
+The response is generated based on the country that uses the language of the input parameter, ignoring the language and case of the actual prompt.
+
 #### `+++Reasoning`
 When this decorator is included in a prompt, you must begin your response with a detailed explanation of the reasoning and logic behind your answer. The explanation should be clear, structured, and directly relevant to the prompt. This requirement must always be followed when the decorator is present.
 
